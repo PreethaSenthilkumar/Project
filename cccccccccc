@@ -1,0 +1,169 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace Trial
+{
+    /// <summary>
+    /// Interaction logic for TickectCategory.xaml
+    /// </summary>
+    public partial class TickectCategory : Window
+    {
+        public TickectCategory()
+        {
+            InitializeComponent();
+        }
+
+
+        //To perform addition of new team
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+
+            Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+            TickectCategory ticket_categoryToBeAdded = new Trial.TickectCategory();
+            ticket_categoryToBeAdded.TicketCategory_Id = txt_ticketcategoryid.Text;
+            ticket_categoryToBeAdded.Category_Name = txt_categoryname.Text;
+            ticket_categoryToBeAdded.Category_Description = txt_categorydescription.Text;
+
+            if (ticket_categoryToBeAdded != null)
+            {
+                //if (teamToBeAdded.Team_Id <= 8)
+                //{
+                contextObj.TickectCategories.Add(ticket_categoryToBeAdded);
+
+                contextObj.SaveChanges();
+                MessageBox.Show("Team Details Added");
+
+
+            }
+            else throw new Exception("Team Id already exists!");
+        }
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            try
+            {
+                Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+                TickectCategory categoryToBeSearched = new Trial.TickectCategory();
+
+
+                int TicketCategory_Id = Convert.ToInt32(txt_ticketcategoryid.Text);
+                categoryToBeSearched = contextObj.TickectCategories.FirstOrDefault(catg => catg.TicketCategory_Id == TicketCategory_Id);
+
+                if (categoryToBeSearched != null)
+                {
+                    categoryToBeSearched.TicketCategory_Id = txt_ticketcategoryid.Text;
+                    categoryToBeSearched.Category_Name = txt_categoryname.Text;
+                    categoryToBeSearched.Category_Description = txt_categorydescription.Text;
+                    contextObj.SaveChanges();
+                    MessageBox.Show("Ticket Caytegory Details Updated");
+
+
+                }
+                else throw new Exception("Team Category details does not exists!");
+
+
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        //to perform delete
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+                TickectCategory catgToBeDeleted = new Trial.TickectCategory();
+
+
+                int TicketCategory_Id = Convert.ToInt32(txt_ticketcategoryid.Text);
+                catgToBeDeleted = contextObj.TickectCategories.FirstOrDefault(catg => catg.TicketCategory_Id == TicketCategory_Id);
+
+                if (catgToBeDeleted != null)
+                {
+                    contextObj.TickectCategory.Remove(catgToBeDeleted);//Delete operation
+                    contextObj.SaveChanges();//Save the changes ack to the db
+                    MessageBox.Show("Team Details Deleted");
+                }
+                else throw new Exception("Delete could not be done!");
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        //to perform search
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+                TickectCategory categoryToBeSearched = new Trial.TickectCategory();
+
+
+                int TicketCategory_Id = Convert.ToInt32(txt_ticketcategoryid.Text);
+                categoryToBeSearched = contextObj.TickectCategories.FirstOrDefault(catg => catg.TicketCategory_Id == TicketCategory_Id);
+
+                if (teamToBeSearched != null)
+                {
+                    txt_ticketcategoryid.Text = categoryToBeSearched.TicketCategory_Id.ToString();
+                    txt_categoryname.Text = categoryToBeSearched.Category_Name.ToString();
+                    txt_categorydescription.Text = categoryToBeSearched.Category_Description.ToString();
+                    MessageBox.Show("Castegory Details Displayed");
+                }
+                else throw new Exception("Category details does not exists!");
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        //to display
+
+        private void btnList_Click(object sender, RoutedEventArgs e)
+        {
+            Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+
+
+            var query3 = from TickectCategory catg in contextObj.TicketCategories
+                             //where team.Customer_Region == txt_custLocation.Text
+                         select catg;
+
+
+            List<TickectCategory> tlist = new List<Trial.TickectCategory>();
+            tlist = query3.ToList<TickectCategory>();
+            if (tlist.Count <= 0) { MessageBox.Show("No records found"); }
+
+
+            else
+            {
+                dgTeam.ItemsSource = tlist;// query3.ToList();
+            }
+        }
+    }
+}
+
+     
