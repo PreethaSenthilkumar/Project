@@ -1,0 +1,184 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace Trial
+{
+    /// <summary>
+    /// Interaction logic for TeamWindow.xaml
+    /// </summary>
+    public partial class TeamWindow : Window
+    {
+        public TeamWindow()
+        {
+            InitializeComponent();
+        }
+
+
+        //to perform delete
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+                Team1 teamToBeDeleted = new Trial.Team1();
+
+
+                int Team_Id = Convert.ToInt32(txt_id.Text);
+                teamToBeDeleted = contextObj.Team1.FirstOrDefault(team => team.Team_Id == Team_Id);
+                if (teamToBeDeleted != null)
+                {
+                    contextObj.Team1.Remove(teamToBeDeleted);//Delete operation
+                    contextObj.SaveChanges();//Save the changes ack to the db
+                    MessageBox.Show("Team Details Deleted");
+                }
+                else throw new Exception("Delete could not be done!");
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        //to display
+
+        private void btnList_Click(object sender, RoutedEventArgs e)
+        {
+            Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+
+
+            var query3 = from Team1 team in contextObj.Team1
+                             //where team.Customer_Region == txt_custLocation.Text
+                         select team;
+
+
+            List<Team1> tlist = new List<Trial.Team1>();
+            tlist = query3.ToList<Team1>();
+            if (tlist.Count <= 0) { MessageBox.Show("No records found"); }
+
+
+            else
+            {
+                dgcatg.ItemsSource = tlist;// query3.ToList();
+            }
+        }
+
+        private void dgTeam_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+        //to perform search
+
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+                Team1 teamToBeSearched = new Trial.Team1();
+
+
+                int Team_Id = Convert.ToInt32(txt_id.Text);
+                teamToBeSearched = contextObj.Team1.FirstOrDefault(team => team.Team_Id == Team_Id);
+
+                if (teamToBeSearched != null )
+                {
+                    txt_teamname.Text = teamToBeSearched.team_name.ToString();
+                    txt_homeground.Text = teamToBeSearched.home_ground.ToString();
+                    txt_owner.Text = teamToBeSearched.team_owner.ToString();
+                    MessageBox.Show("Team Details Displayed");
+                }
+                else throw new Exception("Team details does not exists!");
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        //to perform update
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            try
+            {
+                Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+                Team1 teamToBeSearched = new Trial.Team1();
+
+
+                int Team_Id = Convert.ToInt32(txt_id.Text);
+                teamToBeSearched = contextObj.Team1.FirstOrDefault(team => team.Team_Id == Team_Id);
+
+                if (teamToBeSearched != null)
+                {
+                    teamToBeSearched.team_name= txt_teamname.Text;
+                 teamToBeSearched.home_ground = txt_homeground.Text;
+                    teamToBeSearched.team_owner = txt_owner.Text ;
+                    contextObj.SaveChanges();
+                    MessageBox.Show("Team Details Updated");
+
+
+                }
+                else throw new Exception("Team details does not exists!");
+
+
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+
+
+
+        //To perform addition of new team
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+
+            Sep19CHNEntities contextObj = new Trial.Sep19CHNEntities();
+            Team1 teamToBeAdded = new Trial.Team1();
+            teamToBeAdded.team_name = txt_teamname.Text;
+            teamToBeAdded.home_ground = txt_homeground.Text;
+            teamToBeAdded.team_owner = txt_owner.Text;
+
+            if (teamToBeAdded != null)
+            {
+                //if (teamToBeAdded.Team_Id <= 8)
+                //{
+                contextObj.Team1.Add(teamToBeAdded);
+
+                    contextObj.SaveChanges();
+                    MessageBox.Show("Team Details Added");
+      
+
+        }
+            else throw new Exception("Team Id already exists!");
+
+
+
+
+
+        }
+    }
+}
+
+  
+
+
